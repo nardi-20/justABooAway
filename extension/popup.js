@@ -6,10 +6,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Click gravestone to show ghost and menu
     gravestone.addEventListener("click", () => {
-        popupContent.classList.remove("hidden");
-        ghost.classList.add("shake", "glow", "float");
+        if (!isGhostVisible) {
+            // WAKE UP
+            if (typeof wake === 'function') {
+                wake();
+            }
+            // ... UI changes to SHOW ghost ...
 
-        setTimeout(() => ghost.classList.remove("shake"), 500);
+        } else {
+            // GO TO SLEEP
+            if (typeof sleep === 'function') {
+                sleep(); // Call the dedicated sleep function
+            }
+        }
     });
 
     // Open a modal and close others
