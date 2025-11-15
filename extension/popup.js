@@ -6,18 +6,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Click gravestone to show ghost and menu
     gravestone.addEventListener("click", () => {
-        const isGhostVisible = !ghostContainer.classList.contains("hidden");
+        const isGhostVisible = !popupContent.classList.contains("hidden");
         if (!isGhostVisible) {
-            // WAKE UP
             if (typeof wake === 'function') {
                 wake();
             }
-            // ... UI changes to SHOW ghost ...
-
         } else {
             // GO TO SLEEP
             if (typeof sleep === 'function') {
-                sleep(); // Call the dedicated sleep function
+                sleep();
             }
         }
     });
