@@ -1,12 +1,33 @@
 <!--
 Main html page for chrome extension
 -->
-<html>
-    <head>
+<!DOCTYPE html>
+<html lang="en">
 
-    </head>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device=width, initial-scale=1.0" />
+    <title> justABooAway </title>
+    <link rel="stylesheet" href="popup.css" />
+</head>
 
-    <body>
-        
-    </body>
+<body>
+    <div class="container">
+        <h1 id="title"> justABooAway </h1>
+
+        <div class="theme-section">
+            <p class="label">Current Theme:</p>
+            <span id="currentTheme" class="theme-label">ghost</span>
+            <button id="toggleTheme" class="theme-button">Switch Theme</button>
+        </div>
+
+        <hr />
+
+        <div class="send-section">
+            <button id="sendBoo" class="send-button"> Send a Boo </button>
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
 </html>
