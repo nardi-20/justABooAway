@@ -1,36 +1,32 @@
 {
     "manifest_version": 3,
-    "name": "justABooAway",
+    "name": "JustABooAway",
     "version": "1.0",
-    "description": "A cute Chrome extension that lets long-distance couples send cat or ghost pings to each other.",
-
+    "description": "A spooky Chrome extension for long-distance couples. Ghosts, mail, and haunt interactions!",
     "action": {
-        "default_popup": "popup/popup.html",
-
-        "default icon": {
-            "16": "assets/icon/ghost.16.png",
-            "32": "assets/icon/ghost.32.png",
-            "64": "assets/icon/ghost.64.png"
-        }
+      "default_popup": "popup.html",
+      "default_icon": {
+        "16": "icons/gravestone.png",
+        "48": "icons/gravestone.png",
+        "128": "icons/gravestone.png"
+      }
     },
-
     "icons": {
-        "16": "assets/icon/ghost.16.png",
-        "32": "assets/icon/ghost.32.png",
-        "64": "assets/icon/ghost.64.png" 
+      "16": "icons/gravestone.png",
+      "48": "icons/gravestone.png",
+      "128": "icons/gravestone.png"
     },
-
-    "background": {
-        "service_worker": "background.js"
-    },
-
     "permissions": [
-        "storage",
-        "notifications"
+      "storage",
+      "notifications"
     ],
-
-    "host permissions": [
-        "https://*/",
-        "http://*/"
+    "background": {
+      "service_worker": "background.js"
+    },
+    "content_scripts": [
+      {
+        "matches": ["<all_urls>"],
+        "js": ["content.js"]
+      }
     ]
-}
+  }
