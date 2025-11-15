@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Click gravestone to show ghost and menu
     gravestone.addEventListener("click", () => {
+        const isGhostVisible = !ghostContainer.classList.contains("hidden");
         if (!isGhostVisible) {
             // WAKE UP
             if (typeof wake === 'function') {
