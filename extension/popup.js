@@ -37,34 +37,30 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentGlasses = null;
 
     function updateGhostImage() {
-        let src = "icons/ghost.png";
+        let parts = ["ghost"];
 
-        if (currentHat && currentGlasses) {
-            src = `icons/ghost+${currentHat}+${currentGlasses}.png`;
-        } else if (currentHat) {
-            src = `icons/ghost+${currentHat}.png`;
-        } else if (currentGlasses) {
-            src = `icons/ghost+${currentGlasses}.png`;
-        }
+        if (currentHat) parts.push(currentHat);
+        if (currentGlasses) parts.push(currentGlasses);
 
-        ghostImg.src = src;
+        ghostImg.src = "icons/" + parts.join("+") + ".png";
     }
 
-    document.querySelectorAll(".dress-item").forEach(btn => {
-        btn.addEventListener("click", () => {
-            const type = btn.dataset.type;
-            const id = btn.dataset.id;
+    document.querySelectorAll(".dress-item").forEach(button => {
+        button.addEventListener("click", () => {
+            const type = button.dataset.type;
+            const id = button.dataset.id;
 
             if (type === "hat") {
-                currentHat = id;
-            } else if (type === "glasses") {
-                currentGlasses = id;
+                currentHat = (currentHat === id ? null : id);
             }
-
+            if (type === "glasses") {
+                currentGlasses = (currentGlasses === id ? null : id);
+            }
             updateGhostImage();
         });
     });
-    
+
+
     // Menu button event listeners
     document.getElementById("mailbox").addEventListener("click", () => openModal("mailbox-modal"));
     document.getElementById("dressing").addEventListener("click", () => openModal("dressing-modal"));
