@@ -1,6 +1,4 @@
-<!--
-Main html page for chrome extension
--->
+<!-- Main html page for chrome extension -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -39,30 +37,46 @@ Main html page for chrome extension
         </button>
     </div>
 
-    <script src="Functions/Home/ghost-state.js"></script>
     <!-- Modals -->
     <div id="mailbox-modal" class="modal hidden">
-        <h3>Mailbox</h3>
-        <p>No messages yet!</p>
+        <h3> Mailbox </h3>
+        <p> No messages yet! </p>
         <button class="close-btn">Close</button>
     </div>
 
     <div id="dressing-modal" class="modal hidden">
         <h3>Dressing Station</h3>
         <p>Customize your ghost!</p>
+    
+        <!-- Accessories -->
+        <div id="dressing-options">
+            <button class="dress-item" data-src="icons/hat1.png">
+                <img src="icons/hat1.png" alt="Hat 1">
+            </button>
+            <button class="dress-item" data-src="icons/hat2.png">
+                <img src="icons/hat2.png" alt="Hat 2">
+            </button>
+            <button class="dress-item" data-src="icons/glasses1.png">
+                <img src="icons/glasses1.png" alt="Glasses 1">
+            </button>
+            <button class="dress-item" data-src="icons/glasses2.png">
+                <img src="icons/glasses2.png" alt="Glasses 2">
+            </button>
+        </div>
+    
         <button class="close-btn">Close</button>
-    </div>
+    </div>    
 
     <div id="gifts-modal" class="modal hidden">
-        <h3>Send a Gift</h3>
-        <p>Select a gift to send.</p>
-        <button class="close-btn">Close</button>
+        <h3> Send a Gift </h3>
+        <p> Select a gift to send. </p>
+        <button class="close-btn"> Close </button>
     </div>
 
     <div id="haunt-modal" class="modal hidden">
-        <h3>Haunt</h3>
-        <p>Prepare to scare!</p>
-        <button class="close-btn">Close</button>
+        <h3> Haunt </h3>
+        <p> Prepare to scare! </p>
+        <button class="close-btn"> Close </button>
     </div>
     </div>
 
