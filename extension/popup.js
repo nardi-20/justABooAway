@@ -2,49 +2,62 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- 1. Variable Declarations & Selectors ---
     const gravestone = document.getElementById("gravestone");
     const ghostContainer = document.getElementById("ghost-container"); 
-    const ghostVisContainer = document.getElementById("popup-content");
-    const ghost = document.getElementById("ghost");
+    const ghostVisContainer = document.getElementById("popup-content"); // Visibility container
+    const ghostImg = document.getElementById("ghost"); // Image element
     const menu = document.getElementById("menu");
     const ALL_MODAL_SELECTORS = ".mailbox-background, .dressing-background, .gifts-background, .haunt-background";
 
 
     // --- 2. Helper Functions for Modals ---
 
-    // Closes ALL modals by selecting every element with a background class
     function closeAllModals() {
         document.querySelectorAll(ALL_MODAL_SELECTORS)
             .forEach(m => m.classList.add("hidden"));
     }
 
-    // Opens a modal: closes all others first, then shows the target modal
     function openModal(modalId) {
         closeAllModals(); 
         document.getElementById(modalId).classList.remove("hidden");
     }
 
+    // Function to set up the open/close toggle behavior for a single button
+    function setupModalToggle(buttonId, modalId) {
+        document.getElementById(buttonId).addEventListener("click", () => {
+            const modal = document.getElementById(modalId);
+            
+            // Check if THIS specific modal is currently open (NOT hidden)
+            const isAlreadyOpen = !modal.classList.contains("hidden"); 
 
-    // --- 3. Gravestone Toggle Logic ---
+            if (isAlreadyOpen) {
+                // If it's open, CLOSE it.
+                modal.classList.add("hidden");
+            } else {
+                // If it's closed, OPEN it (uses openModal, which closes all others first)
+                openModal(modalId);
+            }
+        });
+    }
+
+
+    // --- 3. Gravestone Toggle Logic (FIXED) ---
     gravestone.addEventListener("click", () => {
         const isGhostVisible = !ghostVisContainer.classList.contains("hidden");
         if (!isGhostVisible) {
             // WAKE UP
             if (typeof wake === 'function') {
-                wake(ghostVisContainer,ghost,menu);
+                wake(ghostVisContainer, ghostImg, menu);
             }
-
         } else {
             // GO TO SLEEP
             if (typeof sleep === 'function') {
-                sleep(ghostVisContainer,menu);
+                sleep(ghostVisContainer, menu);
             }
         }
+        // 🛑 REMOVED: menu.classList.add("hidden"); 
     });
 
 
     // --- 4. Dressing Room / Ghost Outfit Logic ---
-    // Outfit changes
-    const ghostImg = document.getElementById("ghost");
-
     let currentHat = null;
     let currentGlasses = null;
 
@@ -72,11 +85,12 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
     
-    // Menu button event listeners
-    document.getElementById("mailbox").addEventListener("click", () => openModal("mailbox-modal"));
-    document.getElementById("dressing").addEventListener("click", () => openModal("dressing-modal"));
-    document.getElementById("gifts").addEventListener("click", () => openModal("gifts-modal"));
-    document.getElementById("haunt").addEventListener("click", () => openModal("haunt-modal"));
+    // --- 5. Menu Button Toggle Logic (FIXED) ---
+    // Now use the setupModalToggle function for all menu buttons
+    setupModalToggle("mailbox", "mailbox-modal");
+    setupModalToggle("dressing", "dressing-modal");
+    setupModalToggle("gifts", "gifts-modal");
+    setupModalToggle("haunt", "haunt-modal");
 
     // Close buttons
     document.querySelectorAll(".close-btn").forEach(btn => btn.addEventListener("click", closeAllModals));
