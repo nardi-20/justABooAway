@@ -3,24 +3,28 @@ Main html page for chrome extension
 -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title> JustABooAway </title>
+    <title>JustABooAway</title>
     <link rel="stylesheet" href="popup.css">
 </head>
+
 <body>
     <!-- Always-visible gravestone -->
-    <div id="gravestone-container"> 
+    <div id="gravestone-container">
         <img id="gravestone" src="icons/gravestone.png" alt="Gravestone">
     </div>
 
-    <!-- Ghost placeholder (hidden until triggered) -->
-    <div id="ghost-container" class="hidden">
-        <img id="ghost" src="icons/ghost.png" alt="Ghost">
+    <!-- Ghost placeholder -->
+    <div id="popup-content" class="hidden">
+        <div id="ghost-container">
+            <img id="ghost" src="icons/ghost.png" alt="Ghost">
+        </div>
     </div>
 
-    <!-- Menu (hidden by default) -->
-    <div id="menu" class="hidden">
+    <!-- Menu (always visible) -->
+    <div id="menu">
         <button id="mailbox" class="menu-btn">
             <img src="icons/letter.png" alt="Mailbox">
         </button>
@@ -36,6 +40,33 @@ Main html page for chrome extension
     </div>
 
     <script src="Functions/Home/ghost-state.js"></script>
+    <!-- Modals -->
+    <div id="mailbox-modal" class="modal hidden">
+        <h3>Mailbox</h3>
+        <p>No messages yet!</p>
+        <button class="close-btn">Close</button>
+    </div>
+
+    <div id="dressing-modal" class="modal hidden">
+        <h3>Dressing Station</h3>
+        <p>Customize your ghost!</p>
+        <button class="close-btn">Close</button>
+    </div>
+
+    <div id="gifts-modal" class="modal hidden">
+        <h3>Send a Gift</h3>
+        <p>Select a gift to send.</p>
+        <button class="close-btn">Close</button>
+    </div>
+
+    <div id="haunt-modal" class="modal hidden">
+        <h3>Haunt</h3>
+        <p>Prepare to scare!</p>
+        <button class="close-btn">Close</button>
+    </div>
+    </div>
+
     <script src="popup.js"></script>
 </body>
+
 </html>

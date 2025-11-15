@@ -18,7 +18,7 @@ body {
 /* Gravestone styling */
 #gravestone-container {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     cursor: pointer;
 }
 
@@ -39,12 +39,13 @@ body {
 /* Ghost styling */
 #ghost-container {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 10px; /* space between ghost and menu */
 }
 
 #ghost {
     width: 80px;
     transition: transform 0.5s ease, opacity 0.5s ease;
+    position: relative;
 }
 
 /* Floating ghost animation */
@@ -53,32 +54,26 @@ body {
 }
 
 @keyframes float {
-    0% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(-15px);
-    }
-
-    100% {
-        transform: translateY(0);
-    }
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+    100% { transform: translateY(0); }
 }
 
-/* Menu styling */
+/* Menu buttons */
 #menu {
     display: flex;
     justify-content: space-around;
     flex-wrap: wrap;
-    margin-top: 10px;
+    margin-bottom: 10px;
+    z-index: 10;
 }
 
 .menu-btn {
     background: none;
     border: none;
     cursor: pointer;
-    padding: 10px;
+    padding: 5px;
+    margin-bottom: 5px;
 }
 
 .menu-btn img {
@@ -90,29 +85,42 @@ body {
     transform: scale(1.2);
 }
 
+/* Modals */
+.modal {
+    width: 260px;
+    background: #2b2b2b;
+    border: 2px solid #fff;
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+/* Close button */
+.close-btn {
+    margin-top: 10px;
+    padding: 5px 10px;
+    background: #444;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    background: #666;
+}
+
 /* Shake animation keyframes */
 @keyframes shake {
-    0% {
-        transform: translateX(0);
-    }
-
-    20% {
-        transform: translateX(-5px);
-    }
-
-    40% {
-        transform: translateX(5px);
-    }
-
-    60% {
-        transform: translateX(-5px);
-    }
-
-    80% {
-        transform: translateX(5px);
-    }
-
-    100% {
-        transform: translateX(0);
-    }
+    0% { transform: translateX(0); }
+    20% { transform: translateX(-5px); }
+    40% { transform: translateX(5px); }
+    60% { transform: translateX(-5px); }
+    80% { transform: translateX(5px); }
+    100% { transform: translateX(0); }
 }
