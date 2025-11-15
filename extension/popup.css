@@ -86,7 +86,7 @@ body {
 }
 
 /* Modals */
-.modal {
+.modal,.mailbox-background, .dressing-background, .haunt-background, .gifts-background  {
     width: 260px;
     background: #2b2b2b;
     border: 2px solid #fff;
@@ -96,7 +96,26 @@ body {
     margin-bottom: 10px;
 }
 
-.modal.hidden {
+/* --- Specific Button Backgrounds --- */
+
+.mailbox-background {
+    background-color: #5d92ff; /* Blue for Mailbox */
+}
+
+.dressing-background {
+    background-color: #ff5db5; /* Pink for Dressing */
+}
+
+.haunt-background{
+    background-color: #ffda5d; /* Yellow/Gold for Gifts */
+}
+
+.gifts-background{
+    background-color: #c95dff; /* Purple for Haunt */
+}
+
+.modal.hidden,.mailbox-background.hidden,.dressing-background.hidden,
+    .haunt-background.hidden,.gifts-background.hidden{
     display: none;
 }
 
@@ -150,7 +169,6 @@ body {
     transform: scale(1.1);
     border-color: #fff;
 }
-
 /* Shake animation keyframes */
 @keyframes shake {
     0% { transform: translateX(0); }

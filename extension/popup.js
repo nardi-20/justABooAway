@@ -1,35 +1,66 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // --- 1. Variable Declarations & Selectors ---
     const gravestone = document.getElementById("gravestone");
-    const popupContent = document.getElementById("popup-content");
+    const ghostContainer = document.getElementById("ghost-container"); 
     const ghost = document.getElementById("ghost");
     const menu = document.getElementById("menu");
+    const ALL_MODAL_SELECTORS = ".mailbox-background, .dressing-background, .gifts-background, .haunt-background";
 
-    // Click gravestone to show ghost and menu
-    gravestone.addEventListener("click", () => {
-        const isGhostVisible = !popupContent.classList.contains("hidden");
-        if (!isGhostVisible) {
-            if (typeof wake === 'function') {
-                wake();
-            }
-        } else {
-            // GO TO SLEEP
-            if (typeof sleep === 'function') {
-                sleep();
-            }
-        }
-    });
 
-    // Open a modal and close others
+    // --- 2. Helper Functions for Modals ---
+
+    // Closes ALL modals by selecting every element with a background class
+    function closeAllModals() {
+        document.querySelectorAll(ALL_MODAL_SELECTORS)
+            .forEach(m => m.classList.add("hidden"));
+    }
+
+    // Opens a modal: closes all others first, then shows the target modal
     function openModal(modalId) {
-        document.querySelectorAll(".modal").forEach(m => m.classList.add("hidden"));
+        closeAllModals(); 
         document.getElementById(modalId).classList.remove("hidden");
     }
 
-    // Close all modals
-    function closeAllModals() {
-        document.querySelectorAll(".modal").forEach(m => m.classList.add("hidden"));
-    }
 
+    // --- 3. Gravestone Toggle Logic ---
+    gravestone.addEventListener("click", () => {
+        // Check visibility of the ghost's container (assuming it's what toggles the state)
+        const isGhostVisible = !ghostContainer.classList.contains("hidden");
+
+        if (!isGhostVisible) {
+            // ACTION: WAKE UP
+            if (typeof wake === 'function') {
+                wake();
+            }
+            
+            // UI Changes: SHOW ghost and menu
+            ghostContainer.classList.remove("hidden");
+            menu.classList.remove("hidden");
+            
+            // Apply animations
+            ghost.classList.add("shake", "glow", "float");
+            setTimeout(() => {
+                ghost.classList.remove("shake");
+            }, 500);
+
+        } else {
+            // ACTION: GO TO SLEEP
+            if (typeof sleep === 'function') {
+                sleep();
+            }
+            
+            // UI Changes: HIDE ghost and menu
+            closeAllModals(); // Close any open modals first
+            ghostContainer.classList.add("hidden");
+            menu.classList.add("hidden");
+            
+            // Remove lingering animation classes
+            ghost.classList.remove("glow", "float");
+        }
+    });
+
+
+    // --- 4. Dressing Room / Ghost Outfit Logic ---
     // Outfit changes
     const ghostImg = document.getElementById("ghost");
 
@@ -59,7 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
             updateGhostImage();
         });
     });
-
+    
     // Menu button event listeners
     document.getElementById("mailbox").addEventListener("click", () => openModal("mailbox-modal"));
     document.getElementById("dressing").addEventListener("click", () => openModal("dressing-modal"));
