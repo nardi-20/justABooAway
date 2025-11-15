@@ -1,86 +1,118 @@
 /* Basic reset */
 body {
     margin: 0;
-    padding: 0;
-    font-family: "Inter", sans-serif;
-    background: #ffffff;
-    width: 260px;
-    min-height: 220px;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-}
-
-.container {
-    width: 100%;
-    padding: 16px;
-}
-
-/* Title */
-#title {
-    font-size: 20px;
-    text-align: center;
-    font-weight: 600;
-    margin-bottom: 12px;
-    color: #444;
-}
-
-/* Theme section */
-.theme-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 16px;
-}
-
-.label {
-    font-size: 14px;
-    color: #555;
-    margin-bottom: 4px;
-}
-
-.theme-label {
-    font-size: 16px;
-    font-weight: 500;
-    color: #6d4aff;
-    margin-bottom: 8px;
-}
-
-/* Buttons */
-.theme-button,
-.send-button {
-    padding: 8px 12px;
-    border: none;
-    border-radius: 10px;
-    background: #6d4aff;
+    padding: 10px;
+    font-family: "Arial", sans-serif;
+    background-color: #1b1b1b;
     color: white;
-    font-size: 14px;
+    width: 300px;
+    height: 400px;
+    position: relative;
+}
+
+/* Hide elements by default */
+.hidden {
+    display: none;
+}
+
+/* Gravestone styling */
+#gravestone-container {
+    text-align: center;
+    margin-bottom: 20px;
     cursor: pointer;
-    transition: 0.2s ease;
-    width: 140px;
 }
 
-.theme-button:hover,
-.send-button:hover {
-    background: #5a3ce6;
-    transform: translateY(-1px);
+#gravestone {
+    width: 60px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.theme-button:active,
-.send-button:active {
-    transform: translateY(1px);
+/* Gravestone click animation */
+.shake {
+    animation: shake 0.5s;
 }
 
-/* Send section */
-.send-section {
+.glow {
+    box-shadow: 0 0 15px 5px #ffffffaa;
+}
+
+/* Ghost styling */
+#ghost-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#ghost {
+    width: 80px;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+/* Floating ghost animation */
+.float {
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-15px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
+
+/* Menu styling */
+#menu {
     display: flex;
-    justify-content: center;
-    margin-top: 12px;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin-top: 10px;
 }
 
-/* Divider */
-hr {
+.menu-btn {
+    background: none;
     border: none;
-    border-top: 1px solid #eee;
-    margin-bottom: 16px;
+    cursor: pointer;
+    padding: 10px;
+}
+
+.menu-btn img {
+    width: 50px;
+    transition: transform 0.2s ease;
+}
+
+.menu-btn:hover img {
+    transform: scale(1.2);
+}
+
+/* Shake animation keyframes */
+@keyframes shake {
+    0% {
+        transform: translateX(0);
+    }
+
+    20% {
+        transform: translateX(-5px);
+    }
+
+    40% {
+        transform: translateX(5px);
+    }
+
+    60% {
+        transform: translateX(-5px);
+    }
+
+    80% {
+        transform: translateX(5px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
 }
