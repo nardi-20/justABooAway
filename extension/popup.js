@@ -5,13 +5,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const menu = document.getElementById("menu");
 
     gravestone.addEventListener("click", () => {
+        const isGhostVisible = !ghostContainer.classList.contains("hidden");
         if (!isGhostVisible) {
             // WAKE UP
             if (typeof wake === 'function') {
                 wake();
             }
-            // ... UI changes to SHOW ghost ...
-
         } else {
             // GO TO SLEEP
             if (typeof sleep === 'function') {
