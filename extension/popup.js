@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- 1. Variable Declarations & Selectors ---
     const gravestone = document.getElementById("gravestone");
     const ghostContainer = document.getElementById("ghost-container"); 
+    const ghostVisContainer = document.getElementById("popup-content");
     const ghost = document.getElementById("ghost");
     const menu = document.getElementById("menu");
     const ALL_MODAL_SELECTORS = ".mailbox-background, .dressing-background, .gifts-background, .haunt-background";
@@ -24,38 +25,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // --- 3. Gravestone Toggle Logic ---
     gravestone.addEventListener("click", () => {
-        // Check visibility of the ghost's container (assuming it's what toggles the state)
-        const isGhostVisible = !ghostContainer.classList.contains("hidden");
-
+        const isGhostVisible = !ghostVisContainer.classList.contains("hidden");
         if (!isGhostVisible) {
-            // ACTION: WAKE UP
+            // WAKE UP
             if (typeof wake === 'function') {
-                wake();
+                wake(ghostVisContainer,ghost,menu);
             }
-            
-            // UI Changes: SHOW ghost and menu
-            ghostContainer.classList.remove("hidden");
-            menu.classList.remove("hidden");
-            
-            // Apply animations
-            ghost.classList.add("shake", "glow", "float");
-            setTimeout(() => {
-                ghost.classList.remove("shake");
-            }, 500);
 
         } else {
-            // ACTION: GO TO SLEEP
+            // GO TO SLEEP
             if (typeof sleep === 'function') {
-                sleep();
+                sleep(ghostVisContainer,menu);
             }
-            
-            // UI Changes: HIDE ghost and menu
-            closeAllModals(); // Close any open modals first
-            ghostContainer.classList.add("hidden");
-            menu.classList.add("hidden");
-            
-            // Remove lingering animation classes
-            ghost.classList.remove("glow", "float");
         }
     });
 
