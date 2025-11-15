@@ -1,1 +1,14 @@
-
+{
+  "manifest_version": 3,
+  "name": "Just a Boo Away",
+  "version": "1.0",
+  "description": "To remind you that no matter what, that you're just a boo away. A small way to keep in contact with others",
+  "icons": {   
+    "16": "temp_icon.png", 
+    "48": "icon48.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "temp_icon.png"
+  }
+}
