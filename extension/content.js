@@ -52,7 +52,16 @@ function connectSocket(pairCode) {
                 addGhost(false);      // UI only
             } else if (data.action === "hide-ghost") {
                 removeGhost(false);   // UI only
+                
+            // 💡 --- ADDED THIS SECTION ---
+            // 3. We receive a haunt from our friend
+            } else if (data.action === "haunt-action") {
+                console.log("[JustABooAway] BOO! We've been haunted!");
+                // Tell the popup (if open) and service-worker (if closed)
+                chrome.runtime.sendMessage({ action: "receiveHaunt" });
             }
+            // 💡 --- END OF ADDED SECTION ---
+
         }
     });
 
@@ -146,7 +155,15 @@ chrome.runtime.onMessage.addListener((msg) => {
         if (currentPairCode) {
             connectSocket(currentPairCode);
         }
+
+    // 💡 --- ADDED THIS SECTION ---
+    // 1. Popup told us to "Start Haunting"
+    } else if (msg.action === "startHaunting") {
+        console.log("[JustABooAway] Sending haunt-action to friend...");
+        // 2. We send the new "haunt-action" message over the WebSocket
+        sendPetAction("haunt-action");
     }
+    // 💡 --- END OF ADDED SECTION ---
 });
 
 // =====================

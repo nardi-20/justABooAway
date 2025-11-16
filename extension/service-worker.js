@@ -72,9 +72,16 @@ chrome.runtime.onMessage.addListener(
                     resolve({ success: false, gift: "Sorry, a network error occurred." });
                 }
             }); // End of new Promise
-        }
         
-        // Note: It's good practice to return true for async message listeners,
-        // but returning a Promise (as we do above) accomplishes the same thing.
+        // 💡 --- ADDED THIS SECTION ---
+        // 4. We got a haunt message from content.js
+        } else if (request.action === "receiveHaunt") {
+            console.log("Service worker: Storing haunt flag!");
+            // 5. We set the "haunted" flag in storage.
+            // Your popup.js will see this when it opens.
+            chrome.storage.local.set({ haunted: true });
+        }
+        // 💡 --- END OF ADDED SECTION ---
+
     }
 );

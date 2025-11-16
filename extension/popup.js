@@ -8,12 +8,49 @@ document.addEventListener("DOMContentLoaded", () => {
     const ALL_MODAL_SELECTORS = ".mailbox-background, .dressing-background, .gifts-background, .haunt-background";
     const startHauntBtn = document.getElementById("start-haunt-btn");
 
-    // ✨ Merged from second file
     const pairCodeInput = document.getElementById("pair-code");
     const savePairCodeBtn = document.getElementById("save-code");
 
+    // --- 2. New Haunt Function ---
+    /**
+     * This function makes the ghost get "scared" by the haunt.
+     * IMPORTANT: You must copy "hgl042h.jpg" into your "icons/" folder.
+     * A local path like "/Users/lillian..." will not work.
+     */
+    function getHaunted() {
+        if (!ghostImg) return;
 
-    // --- 2. Helper Functions for Modals ---
+        // 1. Store the current image
+        const originalSrc = ghostImg.src;
+
+        // 2. Change to scary image & shake
+        // Make sure "hgl042h.jpg" is inside your "icons" folder!
+        ghostImg.src = "icons/hgl042h.jpg"; 
+        ghostImg.classList.add("shake"); // Your CSS file already has .shake
+
+        // 3. After the shake (0.5s from your CSS), remove class and revert image
+        setTimeout(() => {
+            ghostImg.classList.remove("shake");
+            ghostImg.src = originalSrc; // Revert to what it was
+        }, 500); // 0.5s = 500ms
+
+        // 4. Clear the storage flag
+        chrome.storage.local.set({ haunted: false }, () => {
+            console.log("Haunt state cleared");
+        });
+    }
+
+    // --- 2.5. Check for Haunt on Load ---
+    // Check if we were haunted while the popup was closed
+    chrome.storage.local.get("haunted", (result) => {
+        if (result.haunted) {
+            // We were haunted!
+            getHaunted();
+            // The getHaunted() function will clear the flag.
+        }
+    });
+
+    // --- 3. Helper Functions for Modals ---
     function closeAllModals() {
         document.querySelectorAll(ALL_MODAL_SELECTORS)
             .forEach(m => m.classList.add("hidden"));
@@ -43,7 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // --- 3. Gravestone Toggle Logic ---
+    // --- 4. Gravestone Toggle Logic ---
     if (gravestone) {
         gravestone.addEventListener("click", () => {
             const isGhostVisible = !ghostVisContainer.classList.contains("hidden");
@@ -61,7 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // --- 4. Ghost Click Toggle ---
+    // --- 5. Ghost Click Toggle ---
     if (ghostImg) {
         ghostImg.addEventListener("click", () => {
             chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -74,8 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // --- 5. Dressing Room / Ghost Outfit Logic ---  
-    // (Your code - preserved)
+    // --- 6. Dressing Room / Ghost Outfit Logic ---  
     let currentHat = null;
     let currentGlasses = null;
 
@@ -103,11 +139,10 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // --- 6. Menu Button Toggle Logic ---
+    // --- 7. Menu Button Toggle Logic ---
     setupModalToggle("mailbox", "mailbox-modal");
     setupModalToggle("dressing", "dressing-modal");
-    // NOTE: "gifts" toggle is now handled in section 8 to add custom logic
-    // setupModalToggle("gifts", "gifts-modal"); // <-- This line was removed
+    // "gifts" toggle is handled in section 9
 
     // Logic for the "Haunt" ICON (from the menu)
     const hauntButton = document.getElementById("haunt");
@@ -133,11 +168,16 @@ document.addEventListener("DOMContentLoaded", () => {
     // Logic for the "Start Haunting" BUTTON (inside the modal)
     if (startHauntBtn) {
         startHauntBtn.addEventListener("click", () => {
-            // Send the message to the webpage to start haunting
-            chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-                const tab = tabs[0];
-                if (tab) {
-                    chrome.tabs.sendMessage(tab.id, { action: "startHaunting" });
+            
+            // 💡 UPDATED: Send message to background to broadcast the haunt
+            // This tells your background.js script to send the haunt
+            // to your paired friend.
+            chrome.runtime.sendMessage({ action: "sendHaunt" }, () => {
+                if (chrome.runtime.lastError) {
+                    console.error("Could not send haunt: ", chrome.runtime.lastError.message);
+                    alert("Could not send haunt! Is the background service running?");
+                } else {
+                    console.log("Haunt message sent to background.");
                 }
             });
 
@@ -155,7 +195,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // --- 7. Playing sounds when hovering over menu options ---
+    // --- 8. Playing sounds when hovering over menu options ---
     const sounds = {
         mailbox: new Audio("sounds/mail.mp3"),
         dressing: new Audio("sounds/dresser.mp3"),
@@ -180,8 +220,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // --- 8. Gemini Gift Generation Logic ---
-    // Trying to make sure the script clears after each prompt
+    // --- 9. Gemini Gift Generation Logic ---
     const giftInput = document.getElementById("gift-input");
     const giftOutput = document.getElementById("gift-output");
     const generateButton = document.getElementById("generate-btn");
@@ -190,33 +229,20 @@ document.addEventListener("DOMContentLoaded", () => {
     // Custom logic for opening the gifts modal
     if (giftsBtn) {
         giftsBtn.addEventListener('click', () => {
-            // Open the modal using the helper function
             openModal('gifts-modal');
-
-            // Clear previous output
             giftOutput.innerHTML = '';
             giftInput.value = '';
-
-            // Optionally also clear storage so it doesn't auto-repopulate
             chrome.storage.local.set({ giftStatus: "default", lastGift: "" });
         });
     }
 
     function displayGift(status, giftHtml) {
         if (!giftOutput) return; // Guard
-
         switch (status) {
-            case "loading":
-                giftOutput.textContent = "Summoning spooky magic...";
-                break;
-            case "success":
-                giftOutput.innerHTML = `<h4>✨ Gift Generated! ✨</h4><p>${giftHtml}</p>`;
-                break;
-            case "error":
-                giftOutput.textContent = giftHtml;
-                break;
-            default:
-                giftOutput.textContent = "";
+            case "loading": giftOutput.textContent = "Summoning spooky magic..."; break;
+            case "success": giftOutput.innerHTML = `<h4>✨ Gift Generated! ✨</h4><p>${giftHtml}</p>`; break;
+            case "error": giftOutput.textContent = giftHtml; break;
+            default: giftOutput.textContent = "Enter a prompt to generate a gift!";
         }
     }
 
@@ -238,7 +264,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-
     if (generateButton) {
         generateButton.addEventListener("click", () => {
             const userPrompt = giftInput.value.trim();
@@ -246,22 +271,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (giftOutput) giftOutput.textContent = "Please enter a prompt!";
                 return;
             }
-
             const fullPrompt = `You are a friendly, slightly spooky ghost. Generate a creative gift based on this user request: "${userPrompt}". Keep the tone light and fun.`;
-
-            chrome.runtime.sendMessage({
-                action: "generateGift",
-                prompt: fullPrompt
-            });
-
+            chrome.runtime.sendMessage({ action: "generateGift", prompt: fullPrompt });
             displayGift("loading");
         });
     }
 
 
-    // --- 9. Pairing Code Logic (Merged from second file) ---
+    // --- 10. Pairing Code Logic ---
     if (pairCodeInput && savePairCodeBtn) {
-
         // Prefill input with saved code
         chrome.storage.local.get(["pairCode"], (res) => {
             if (res.pairCode) {
@@ -277,10 +295,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.log("[JustABooAway] Empty code, not saving");
                 return;
             }
-
             chrome.storage.local.set({ pairCode: code }, () => {
                 console.log("[JustABooAway] Saved pairing code:", code);
-
                 // Tell the active tab to reconnect with this new code
                 chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
                     if (!tabs[0]) return;
@@ -292,5 +308,14 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
     }
+    
+    // --- 11. Listen for Haunt from Background Script ---
+    // This listens for the message from your background.js
+    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+        if (request.action === "receiveHaunt") {
+            console.log("BOO! We've been haunted!");
+            getHaunted();
+        }
+    });
 
 });
