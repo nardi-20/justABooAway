@@ -54,10 +54,6 @@
       "matches": ["<all_urls>"],
       "js": ["content.js"]
     }
-<<<<<<< HEAD
-  ]
-}
-=======
   ],
   "web_accessible_resources": [
     {
@@ -76,4 +72,3 @@
     }
   ]
 }
->>>>>>> 1b4b86d (maybe)
