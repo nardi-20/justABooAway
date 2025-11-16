@@ -1,64 +1,70 @@
 document.addEventListener("DOMContentLoaded", () => {
     // --- 1. Variable Declarations & Selectors ---
-    const gravestone = document.getElementById("gravestone");
-    const ghostContainer = document.getElementById("ghost-container");
-    const ghostVisContainer = document.getElementById("popup-content"); // Visibility container
-    const ghostImg = document.getElementById("ghost"); // Image element
-    const menu = document.getElementById("menu");
-    const ALL_MODAL_SELECTORS = ".mailbox-background, .dressing-background, .gifts-background, .haunt-background";
-    const startHauntBtn = document.getElementById("start-haunt-btn");
+    const gravestone       = document.getElementById("gravestone");
+    const ghostContainer   = document.getElementById("ghost-container");
+    const ghostVisContainer = document.getElementById("popup-content");
+    const ghostImg         = document.getElementById("ghost");
+    const menu             = document.getElementById("menu");
+    const ALL_MODAL_SELECTORS =
+        ".mailbox-background, .dressing-background, .gifts-background, .haunt-background";
+    const startHauntBtn    = document.getElementById("start-haunt-btn");
 
-    const pairCodeInput = document.getElementById("pair-code");
-    const savePairCodeBtn = document.getElementById("save-code");
+    const pairCodeInput    = document.getElementById("pair-code");
+    const savePairCodeBtn  = document.getElementById("save-code");
 
-    // --- 2. New Haunt Function (V2) ---
+    // --- 2. Haunt visual (popup ghost gets scared) ---
+
     function getHaunted() {
         if (!ghostImg) return;
+
         const originalSrc = ghostImg.src;
         ghostImg.src = "icons/hgl042h.jpg";
-        ghostImg.classList.add("shake"); 
+        ghostImg.classList.add("shake");
 
         setTimeout(() => {
             ghostImg.classList.remove("shake");
             ghostImg.src = originalSrc;
-        }, 500); 
+        }, 500);
 
         chrome.storage.local.set({ haunted: false }, () => {
             console.log("Haunt state cleared");
         });
     }
 
-    // --- 2.5. Check for Haunt on Load (V2) ---
+    // Check if we were haunted while popup was closed
     chrome.storage.local.get("haunted", (result) => {
         if (result.haunted) {
             getHaunted();
         }
     });
 
-    // --- 3. Helper Functions for Modals ---
+    // --- 3. Helper functions for modals ---
+
     function closeAllModals() {
-        document.querySelectorAll(ALL_MODAL_SELECTORS)
-            .forEach(m => {
-                if (!m.classList.contains('ghost-container') && !m.id.includes('popup-content')) {
-                    m.classList.add("hidden");
-                }
-            });
+        document.querySelectorAll(ALL_MODAL_SELECTORS).forEach(m => {
+            if (!m.classList.contains("ghost-container") &&
+                !m.id.includes("popup-content")) {
+                m.classList.add("hidden");
+            }
+        });
     }
 
     function openModal(modalId) {
         closeAllModals();
-        document.getElementById(modalId).classList.remove("hidden");
+        const modal = document.getElementById(modalId);
+        if (modal) modal.classList.remove("hidden");
     }
 
     function setupModalToggle(buttonId, modalId) {
         const button = document.getElementById(buttonId);
-        if (!button) return; 
+        if (!button) return;
 
         button.addEventListener("click", () => {
             const modal = document.getElementById(modalId);
             if (!modal) return;
-            const isAlreadyOpen = !modal.classList.contains("hidden");
-            if (isAlreadyOpen) {
+
+            const isOpen = !modal.classList.contains("hidden");
+            if (isOpen) {
                 modal.classList.add("hidden");
             } else {
                 openModal(modalId);
@@ -66,103 +72,130 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // --- 4. Gravestone wake/sleep logic (popup ghost only) ---
 
-    // --- 4. Gravestone Toggle Logic ---
     if (gravestone) {
         gravestone.addEventListener("click", () => {
-            const isGhostVisible = !ghostVisContainer.classList.contains("hidden");
+            const isGhostVisible =
+                ghostVisContainer && !ghostVisContainer.classList.contains("hidden");
+
             if (!isGhostVisible) {
-                if (typeof wake === 'function') {
+                // WAKE
+                if (typeof wake === "function") {
                     wake(ghostVisContainer, ghostImg, menu);
+                } else if (ghostVisContainer) {
+                    ghostVisContainer.classList.remove("hidden");
+                    if (menu) menu.classList.remove("hidden");
                 }
             } else {
-                if (typeof sleep === 'function') {
+                // SLEEP
+                if (typeof sleep === "function") {
                     sleep(ghostVisContainer, menu);
+                } else if (ghostVisContainer) {
+                    ghostVisContainer.classList.add("hidden");
+                    if (menu) menu.classList.add("hidden");
                 }
             }
-        });
-    }
 
-    // --- 5. Ghost Click Toggle ---
-    if (ghostImg) {
-        ghostImg.addEventListener("click", () => {
+            // Regardless of animations, tell content script to toggle page ghost locally
             chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
                 const tab = tabs[0];
-                if (!tab) {
-                    return;
-                }
+                if (!tab) return;
                 chrome.tabs.sendMessage(tab.id, { action: "toggleGhost" });
             });
         });
     }
 
+    // --- 5. Clicking the popup ghost also toggles page ghost ---
 
-    // --- 6. Dressing Room / Ghost Outfit Logic (V1) ---  
-    let currentHat = null;
-    let currentGlasses = null;
+    if (ghostImg) {
+        ghostImg.addEventListener("click", () => {
+            chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                const tab = tabs[0];
+                if (!tab) return;
+                chrome.tabs.sendMessage(tab.id, { action: "toggleGhost" });
+            });
+        });
+    }
+
+    // --- 6. Dressing Room / Ghost Outfit Logic (popup + page) ---
+
+    let currentHat      = null;   // "hat1" | "hat2" | null
+    let currentGlasses  = null;   // "glasses1" | "glasses2" | null
 
     function updateGhostImage() {
+        if (!ghostImg) return;
         let parts = ["ghost"];
-        if (currentHat) parts.push(currentHat);
+        if (currentHat)     parts.push(currentHat);
         if (currentGlasses) parts.push(currentGlasses);
         ghostImg.src = "icons/" + parts.join("+") + ".png";
     }
 
+    function notifyContentDressState() {
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            const tab = tabs[0];
+            if (!tab) return;
+
+            chrome.tabs.sendMessage(tab.id, {
+                action: "setHat",
+                hatId: currentHat
+            });
+
+            chrome.tabs.sendMessage(tab.id, {
+                action: "setGlasses",
+                glassesId: currentGlasses
+            });
+        });
+    }
+
     document.querySelectorAll(".dress-item").forEach(button => {
         button.addEventListener("click", () => {
-            const type = button.dataset.type;
-            const id = button.dataset.id;
+            const type = button.dataset.type;  // "hat" | "glasses"
+            const id   = button.dataset.id;    // "hat1", "hat2", "glasses1", "glasses2"
+
             if (type === "hat") {
                 currentHat = (currentHat === id ? null : id);
-            }
-            if (type === "glasses") {
+            } else if (type === "glasses") {
                 currentGlasses = (currentGlasses === id ? null : id);
             }
+
             updateGhostImage();
-            
-            // Send to content script (from V1 logic)
-            chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-                if (tabs[0] && tabs[0].id) {
-                    if (type === "hat") {
-                        chrome.tabs.sendMessage(tabs[0].id, { action: "setHat", hatId: currentHat });
-                    }
-                    if (type === "glasses") {
-                        chrome.tabs.sendMessage(tabs[0].id, { action: "setGlasses", glassesId: currentGlasses });
-                    }
-                }
-            });
+            notifyContentDressState();
         });
     });
 
-    // --- 7. Menu Button Toggle Logic ---
+    // --- 7. Menu buttons -> modals ---
+
     setupModalToggle("mailbox", "mailbox-modal");
     setupModalToggle("dressing", "dressing-modal");
-    // "gifts" toggle is handled in section 9
+    // gifts modal handled in section 9
 
-    // Logic for the "Haunt" ICON (from V2)
+    // Haunt icon in menu
     const hauntButton = document.getElementById("haunt");
     if (hauntButton) {
         hauntButton.addEventListener("click", () => {
             const modal = document.getElementById("haunt-modal");
             if (!modal) return;
-            const isAlreadyOpen = !modal.classList.contains("hidden");
-            if (isAlreadyOpen) {
+
+            const isOpen = !modal.classList.contains("hidden");
+            if (isOpen) {
                 modal.classList.add("hidden");
-                updateGhostImage(); // Reset the image
+                updateGhostImage();
             } else {
                 openModal("haunt-modal");
-                ghostImg.src = "icons/ghost+scary.png"; 
+                if (ghostImg) {
+                    ghostImg.src = "icons/ghost+scary.png";
+                }
             }
         });
     }
 
-    // Logic for the "Start Haunting" BUTTON (from V2)
     if (startHauntBtn) {
         startHauntBtn.addEventListener("click", () => {
-            // UPDATED (V2): Send message to background
+            // Ask background to send haunt via WebSocket
             chrome.runtime.sendMessage({ action: "sendHaunt" }, () => {
                 if (chrome.runtime.lastError) {
-                    console.error("Could not send haunt: ", chrome.runtime.lastError.message);
+                    console.error("Could not send haunt:", chrome.runtime.lastError.message);
                     alert("Could not send haunt! Is the background service running?");
                 } else {
                     console.log("Haunt message sent to background.");
@@ -172,60 +205,71 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Close buttons (from V2, with reset)
+    // Close buttons (and reset popup ghost image)
     document.querySelectorAll(".close-btn").forEach(btn => {
         btn.addEventListener("click", () => {
             closeAllModals();
-            updateGhostImage(); // Reset the ghost
+            updateGhostImage();
         });
     });
 
-    // --- 8. Playing sounds when hovering over menu options ---
+    // --- 8. Hover sounds for menu & gravestone/ghost ---
+
     const sounds = {
-        mailbox: new Audio("sounds/mail.mp3"),
-        dressing: new Audio("sounds/dresser.mp3"),
-        gifts: new Audio("sounds/gift.mp3"),
-        haunt: new Audio("sounds/haunt.mp3"),
-        gravestone: new Audio("sounds/gravestone.mp3"),
-        ghost: new Audio("sounds/ghost.mp3")
+        mailbox:   new Audio("sounds/mail.mp3"),
+        dressing:  new Audio("sounds/dresser.mp3"),
+        gifts:     new Audio("sounds/gift.mp3"),
+        haunt:     new Audio("sounds/haunt.mp3"),
+        gravestone:new Audio("sounds/gravestone.mp3"),
+        ghost:     new Audio("sounds/ghost.mp3")
     };
 
     Object.keys(sounds).forEach(id => {
         const btn = document.getElementById(id);
-        if (!btn) return; 
+        if (!btn) return;
 
         btn.addEventListener("mouseenter", () => {
             sounds[id].currentTime = 0;
             sounds[id].play();
         });
+
         btn.addEventListener("mouseleave", () => {
             sounds[id].pause();
             sounds[id].currentTime = 0;
         });
     });
 
-    // --- 9. Gemini Gift Generation Logic (V2) ---
-    const giftInput = document.getElementById("gift-input");
-    const giftOutput = document.getElementById("gift-output");
+    // --- 9. Gemini Gift Generation Logic ---
+
+    const giftInput    = document.getElementById("gift-input");
+    const giftOutput   = document.getElementById("gift-output");
     const generateButton = document.getElementById("generate-btn");
-    const giftsBtn = document.getElementById('gifts');
+    const giftsBtn     = document.getElementById("gifts");
 
     if (giftsBtn) {
-        giftsBtn.addEventListener('click', () => {
-            openModal('gifts-modal');
-            giftOutput.innerHTML = '';
-            giftInput.value = '';
+        giftsBtn.addEventListener("click", () => {
+            openModal("gifts-modal");
+            if (giftOutput) giftOutput.innerHTML = "";
+            if (giftInput)  giftInput.value = "";
             chrome.storage.local.set({ giftStatus: "default", lastGift: "" });
         });
     }
 
     function displayGift(status, giftHtml) {
-        if (!giftOutput) return; // Guard
+        if (!giftOutput) return;
         switch (status) {
-            case "loading": giftOutput.textContent = "Summoning spooky magic..."; break;
-            case "success": giftOutput.innerHTML = `<h4>✨ Gift Generated! ✨</h4><p>${giftHtml}</p>`; break;
-            case "error": giftOutput.textContent = giftHtml; break;
-            default: giftOutput.textContent = "Enter a prompt to generate a gift!";
+            case "loading":
+                giftOutput.textContent = "Summoning spooky magic...";
+                break;
+            case "success":
+                giftOutput.innerHTML =
+                    `<h4>✨ Gift Generated! ✨</h4><p>${giftHtml}</p>`;
+                break;
+            case "error":
+                giftOutput.textContent = giftHtml;
+                break;
+            default:
+                giftOutput.textContent = "Enter a prompt to generate a gift!";
         }
     }
 
@@ -252,67 +296,89 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (giftOutput) giftOutput.textContent = "Please enter a prompt!";
                 return;
             }
-            const fullPrompt = `You are a friendly, slightly spooky ghost. Generate a creative gift based on this user request: "${userPrompt}". Keep the tone light and fun.`;
-            chrome.runtime.sendMessage({ action: "generateGift", prompt: fullPrompt });
+            const fullPrompt =
+                `You are a friendly, slightly spooky ghost. ` +
+                `Generate a creative gift based on this user request: "${userPrompt}". ` +
+                `Keep the tone light and fun.`;
+
+            chrome.runtime.sendMessage(
+                { action: "generateGift", prompt: fullPrompt }
+            );
             displayGift("loading");
         });
     }
 
+    // --- 10. Pairing Code Logic ---
 
-    // --- 10. Pairing Code Logic (V2) ---
     if (pairCodeInput && savePairCodeBtn) {
         chrome.storage.local.get(["pairCode"], (res) => {
             if (res.pairCode) {
                 pairCodeInput.value = res.pairCode;
+                console.log("[JustABooAway] Loaded stored pairCode:", res.pairCode);
             }
-        })
+        });
+
         savePairCodeBtn.addEventListener("click", () => {
             const code = pairCodeInput.value.trim();
-            if (!code) return;
+            if (!code) {
+                console.log("[JustABooAway] Empty code, not saving");
+                return;
+            }
             chrome.storage.local.set({ pairCode: code }, () => {
                 console.log("[JustABooAway] Saved pairing code:", code);
-                // Send to content script to re-initiate WebSocket
-                chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-                    if (tabs[0] && tabs[0].id) {
-                         chrome.tabs.sendMessage(tabs[0].id, {
-                            action: "setPairCode",
-                            code: code
-                        });
-                    }
+                chrome.runtime.sendMessage({
+                    action: "setPairCode",
+                    code: code
                 });
             });
         });
-    };
+    }
 
-    // --- 11. Listen for Haunt from Background Script (V2) ---
+    // --- 11. Listen for Haunt from background ---
+
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         if (request.action === "receiveHaunt") {
-            console.log("BOO! We've been haunted!");
+            console.log("BOO! We've been haunted (popup)!");
             getHaunted();
         }
-        // NOTE: The V2 simple chat does NOT listen for 'receiveMessage'
-        // This is intentional per your request for the "new chat/mailbox"
+        if (request.action === "receiveMessage" && request.message) {
+            // Show partner's message in mailbox
+            addMessage(request.message.text, "friend");
+        }
     });
 
-    // --- 12. Messaging (SIMPLE V2) ---
-    const chatInput = document.getElementById("modal-chat-input");
-    const sendBtn = document.getElementById("modal-send-btn");
+    // --- 12. Simple mailbox chat UI ---
 
-    if (sendBtn && chatInput) {
+    const input       = document.getElementById("modal-chat-input");
+    const chatDisplay = document.getElementById("modal-chat-display");
+    const sendBtn     = document.getElementById("modal-send-btn");
+
+    const chatMessages = [];
+
+    function addMessage(text, type) {
+        if (!chatDisplay) return;
+        const msgEl = document.createElement("div");
+        msgEl.classList.add(type);    // "you" or "friend"
+        msgEl.textContent = text;
+        chatDisplay.appendChild(msgEl);
+        chatDisplay.scrollTop = chatDisplay.scrollHeight;
+        chatMessages.push({ text, type });
+    }
+
+    if (sendBtn) {
         sendBtn.addEventListener("click", () => {
-            const text = chatInput.value.trim();
+            const text = input.value.trim();
             if (!text) return;
 
-            chatInput.value = "";
+            addMessage(text, "you");
+            input.value = "";
 
-            // Send to active tab → content.js → WebSocket → partner
             chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
                 const tab = tabs[0];
                 if (!tab) return;
-
                 chrome.tabs.sendMessage(tab.id, {
-                    action: "sendChat", // content.js listens for this
-                    text,
+                    action: "sendMessage",
+                    text: text
                 });
             });
         });

@@ -116,7 +116,7 @@ body {
     animation: float 3s ease-in-out infinite, ghost-glow 3s ease-in-out infinite;
 }
 
-/* === PAIRING CONTAINER (V2) === */
+/* === PAIRING CONTAINER === */
 #pairing-container {
     display: flex;
     gap: 5px;
@@ -264,7 +264,7 @@ body {
     box-shadow: 0 0 10px #ff6600;
 }
 
-/* === GIFT INPUT/OUTPUT STYLING (V2) === */
+/* === GIFT INPUT/OUTPUT STYLING === */
 #gift-output {
     width: 100%;
     min-height: 50px;
@@ -299,7 +299,7 @@ body {
     font-style: italic;
 }
 
-/* --- Haunt modal specific styles (V2) --- */
+/* --- Haunt modal specific styles --- */
 @keyframes haunt-modal-pop {
     0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
     100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
@@ -309,21 +309,26 @@ body {
     background: #282828;
     border: 2px solid #8B0000;
     box-shadow: 0 0 20px #8B0000;
+
     position: fixed;
     top: 70%;
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 200;
     margin: 0;
+
     width: 90%;
     max-width: 300px;
     min-height: 100px;
     padding: 20px;
+
     border-radius: 15px;
     text-align: center;
+
     animation-name: haunt-modal-pop;
     animation-duration: 0.3s;
     animation-timing-function: ease-out;
+
     overflow: auto;
     box-sizing: border-box;
 }
@@ -380,8 +385,25 @@ body {
     background-color: #777;
 }
 
-/* ---- Messaging styles (Simple V2) ---- */
-/* These styles are for the input and button in the simple chat */
+/* ---- Messaging styles ---- */
+#modal-chat-display {
+    width: 100%;
+    min-height: 150px;
+    max-height: 200px;
+    margin-bottom: 8px;
+    padding: 10px;
+    background: rgba(0,0,0,0.2);
+    color: #f0f0f0;
+    font-family: "Creepster", cursive, Arial, sans-serif;
+    font-size: 14px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    border: 2px solid #ff6600;
+    border-radius: 10px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
 
 #modal-chat-input {
     width: 70%;
@@ -419,6 +441,27 @@ body {
     background: #444;
 }
 
-/* The styles for #modal-chat-display, .you, and .friend (from V1)
-  have been removed as requested, to use the new simple chat (V2).
-*/
+#modal-chat-display div {
+    display: inline-block;
+    max-width: 70%;
+    padding: 8px 12px;
+    margin: 6px 0;
+    border-radius: 12px;
+    word-wrap: break-word;
+    font-family: "Creepster", cursive, Arial, sans-serif;
+    font-size: 14px;
+}
+
+#modal-chat-display .you {
+    background-color: #ff6600;
+    color: #fff;
+    align-self: flex-end;
+    text-align: right;
+}
+
+#modal-chat-display .friend {
+    background-color: #555;
+    color: #ddd;
+    align-self: flex-start;
+    text-align: left;
+}

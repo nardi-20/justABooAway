@@ -20,15 +20,32 @@
   },
 
   "permissions": [
+    "tabs",
     "storage",
-    "notifications",
-    "tabs"
+    "notifications"
   ],
 
   "host_permissions": [
-    "<all_urls>",
     "https://generativelanguage.googleapis.com/"
   ],
+
+"web_accessible_resources": [
+  {
+    "resources": [
+      "icons/ghost.png",
+      "icons/GhostIdle.gif",
+      "icons/GhostFly.gif",
+      "icons/GhostDie.gif",
+      "icons/spider-bow.png",
+      "icons/glasses1.png",
+      "icons/glasses2.png",
+      "icons/hat1.png",
+      "icons/hat2.png"
+
+    ],
+    "matches": ["<all_urls>"]
+  }
+],
 
   "background": {
     "service_worker": "service-worker.js"
@@ -39,20 +56,5 @@
       "matches": ["<all_urls>"],
       "js": ["content.js"]
     }
-  ],
-
-  "web_accessible_resources": [
-      {
-        "resources": [
-          "icons/ghost.png",
-          "icons/GhostIdle.gif",
-          "icons/GhostDie.gif",
-          "iconsicons/GhostFly.gif",
-          "icons/HauntedHead.gif",
-          "icons/*.png",
-          "icons/*.jpg"
-        ],
-        "matches": ["<all_urls>"]
-      }
-    ]
+  ]
 }
