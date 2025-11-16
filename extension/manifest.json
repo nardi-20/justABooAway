@@ -47,7 +47,7 @@
           "icons/ghost.png",
           "icons/GhostIdle.gif",
           "icons/GhostDie.gif",
-          "icons/GhostFly.gif",
+          "iconsicons/GhostFly.gif",
           "icons/HauntedHead.gif",
           "icons/*.png",
           "icons/*.jpg"

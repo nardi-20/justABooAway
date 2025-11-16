@@ -11,8 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const pairCodeInput = document.getElementById("pair-code");
     const savePairCodeBtn = document.getElementById("save-code");
 
-    // --- 2. New Haunt Function ---
-    // This is from Version 2
+    // --- 2. New Haunt Function (V2) ---
     function getHaunted() {
         if (!ghostImg) return;
         const originalSrc = ghostImg.src;
@@ -29,8 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // --- 2.5. Check for Haunt on Load ---
-    // This is from Version 2
+    // --- 2.5. Check for Haunt on Load (V2) ---
     chrome.storage.local.get("haunted", (result) => {
         if (result.haunted) {
             getHaunted();
@@ -99,7 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // --- 6. Dressing Room / Ghost Outfit Logic ---  
+    // --- 6. Dressing Room / Ghost Outfit Logic (V1) ---  
     let currentHat = null;
     let currentGlasses = null;
 
@@ -121,6 +119,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 currentGlasses = (currentGlasses === id ? null : id);
             }
             updateGhostImage();
+            
+            // Send to content script (from V1 logic)
+            chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                if (tabs[0] && tabs[0].id) {
+                    if (type === "hat") {
+                        chrome.tabs.sendMessage(tabs[0].id, { action: "setHat", hatId: currentHat });
+                    }
+                    if (type === "glasses") {
+                        chrome.tabs.sendMessage(tabs[0].id, { action: "setGlasses", glassesId: currentGlasses });
+                    }
+                }
+            });
         });
     });
 
@@ -129,7 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setupModalToggle("dressing", "dressing-modal");
     // "gifts" toggle is handled in section 9
 
-    // Logic for the "Haunt" ICON (from Version 2)
+    // Logic for the "Haunt" ICON (from V2)
     const hauntButton = document.getElementById("haunt");
     if (hauntButton) {
         hauntButton.addEventListener("click", () => {
@@ -146,10 +156,10 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Logic for the "Start Haunting" BUTTON (from Version 2)
+    // Logic for the "Start Haunting" BUTTON (from V2)
     if (startHauntBtn) {
         startHauntBtn.addEventListener("click", () => {
-            // UPDATED: Send message to background
+            // UPDATED (V2): Send message to background
             chrome.runtime.sendMessage({ action: "sendHaunt" }, () => {
                 if (chrome.runtime.lastError) {
                     console.error("Could not send haunt: ", chrome.runtime.lastError.message);
@@ -162,7 +172,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Close buttons (from Version 2, with reset)
+    // Close buttons (from V2, with reset)
     document.querySelectorAll(".close-btn").forEach(btn => {
         btn.addEventListener("click", () => {
             closeAllModals();
@@ -194,8 +204,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // --- 9. Gemini Gift Generation Logic ---
-    // This is from Version 2
+    // --- 9. Gemini Gift Generation Logic (V2) ---
     const giftInput = document.getElementById("gift-input");
     const giftOutput = document.getElementById("gift-output");
     const generateButton = document.getElementById("generate-btn");
@@ -250,8 +259,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // --- 10. Pairing Code Logic ---
-    // This is from Version 2
+    // --- 10. Pairing Code Logic (V2) ---
     if (pairCodeInput && savePairCodeBtn) {
         chrome.storage.local.get(["pairCode"], (res) => {
             if (res.pairCode) {
@@ -263,25 +271,30 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!code) return;
             chrome.storage.local.set({ pairCode: code }, () => {
                 console.log("[JustABooAway] Saved pairing code:", code);
-                chrome.runtime.sendMessage({
-                    action: "setPairCode",
-                    code: code
+                // Send to content script to re-initiate WebSocket
+                chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                    if (tabs[0] && tabs[0].id) {
+                         chrome.tabs.sendMessage(tabs[0].id, {
+                            action: "setPairCode",
+                            code: code
+                        });
+                    }
                 });
             });
         });
     };
 
-    // --- 11. Listen for Haunt from Background Script ---
-    // This is from Version 2
+    // --- 11. Listen for Haunt from Background Script (V2) ---
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         if (request.action === "receiveHaunt") {
             console.log("BOO! We've been haunted!");
             getHaunted();
         }
+        // NOTE: The V2 simple chat does NOT listen for 'receiveMessage'
+        // This is intentional per your request for the "new chat/mailbox"
     });
 
-    // --- 12. Messaging (SIMPLE) ---
-    // This is from Version 1, as you requested
+    // --- 12. Messaging (SIMPLE V2) ---
     const chatInput = document.getElementById("modal-chat-input");
     const sendBtn = document.getElementById("modal-send-btn");
 
@@ -298,7 +311,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (!tab) return;
 
                 chrome.tabs.sendMessage(tab.id, {
-                    action: "sendChat", // This is the old action name
+                    action: "sendChat", // content.js listens for this
                     text,
                 });
             });

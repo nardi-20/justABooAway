@@ -55,6 +55,8 @@ chrome.runtime.onMessage.addListener(
             // This is the block you need for the advanced haunt
             chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
                 if (tabs[0] && tabs[0].id) {
+                    // This message (startHaunting) is now sent to content.js
+                    // The new V2 popup.js also sends a message, but this is the correct flow
                     chrome.tabs.sendMessage(tabs[0].id, { action: "startHaunting" });
                 }
             });
