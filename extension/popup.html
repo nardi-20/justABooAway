@@ -4,6 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <title>JustABooAway</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Nosifier&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="popup.css">
 </head>
 
@@ -22,6 +27,7 @@
         <input type="text" id="pair-code" placeholder="Enter pairing code">
         <button id="save-code">Save Code</button>
     </div>
+
     <div id="menu">
         <button id="mailbox" class="menu-btn">
             <img src="icons/letter.png" alt="Mailbox">
@@ -38,56 +44,59 @@
     </div>
 
     <div id="mailbox-modal" class="modal mailbox-background hidden">
-        <h3> Mailbox </h3>
-        <p> No messages yet! </p>
-        <button class="close-btn">Close</button>
+        <div class="modal-content">
+            <h3> Mailbox </h3>
+            <p> No messages yet! </p>
+            <button class="close-btn">Close</button>
+        </div>
     </div>
 
     <div id="dressing-modal" class="modal dressing-background hidden">
-        <h3>Dressing Station</h3>
-        <p>Customize your ghost!</p>
+        <div class="modal-content">
+            <h3>Dressing Station</h3>
+            <p>Customize your ghost!</p>
 
-        <div id="dressing-options">
-            <button class="dress-item" data-type="hat" data-id="hat1">
-                <img src="icons/hat1.png" alt="Hat 1">
-            </button>
-            <button class="dress-item" data-type="hat" data-id="hat2">
-                <img src="icons/hat2.png" alt="Hat 2">
-            </button>
-            <button class="dress-item" data-type="glasses" data-id="glasses1">
-                <img src="icons/glasses1.png" alt="Glasses 1">
-            </button>
-            <button class="dress-item" data-type="glasses" data-id="glasses2">
-                <img src="icons/glasses2.png" alt="Glasses 2">
-            </button>
+            <div id="dressing-options">
+                <button class="dress-item" data-type="hat" data-id="hat1">
+                    <img src="icons/hat1.png" alt="Hat 1">
+                </button>
+                <button class="dress-item" data-type="hat" data-id="hat2">
+                    <img src="icons/hat2.png" alt="Hat 2">
+                </button>
+                <button class="dress-item" data-type="glasses" data-id="glasses1">
+                    <img src="icons/glasses1.png" alt="Glasses 1">
+                </button>
+                <button class="dress-item" data-type="glasses" data-id="glasses2">
+                    <img src="icons/glasses2.png" alt="Glasses 2">
+                </button>
+            </div>
+
+            <button class="close-btn">Close</button>
         </div>
-
-        <button class="close-btn">Close</button>
     </div>
 
     <div id="gifts-modal" class="modal gifts-background hidden">
-        <h3> Generate a Gift </h3>
-        <textarea id="gift-input"
-            placeholder="e.g., Write a 4-line spooky poem for a friend who loves bats..."></textarea>
-        <button id="generate-btn"
-            style="font-family: 'Creepster', cursive; color: #f0f0f0; background: #333; border: 2px solid #ff6600; border-radius: 8px; padding: 6px 12px; cursor: pointer;">
-            Conjure Gift
-        </button>
-        <div id="gift-output"></div>
-        <button class="close-btn"> Close </button>
+        <div class="modal-content">
+            <h3> Generate a Gift </h3>
+            <textarea id="gift-input"
+                placeholder="e.g., Write a 4-line spooky poem for a friend who loves bats..."></textarea>
+            <button id="generate-btn"
+                style="font-family: 'Creepster', cursive; color: #f0f0f0; background: #333; border: 2px solid #ff6600; border-radius: 8px; padding: 6px 12px; cursor: pointer;">
+                Conjure Gift
+            </button>
+            <div id="gift-output"></div>
+            <button class="close-btn"> Close </button>
+        </div>
     </div>
 
     <div id="haunt-modal" class="modal haunt-background hidden">
         <div class="modal-content">
             <h3> Haunt </h3>
             <p>Pair with a friend to prepare a scare!</p>
-
             <button id="start-haunt-btn">Start Haunting</button>
-
             <button class="close-btn"> Close </button>
         </div>
     </div>
-
     <script src="Functions/Home/ghost-state.js"></script>
     <script src="popup.js"></script>
 </body>
