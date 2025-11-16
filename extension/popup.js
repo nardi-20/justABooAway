@@ -164,6 +164,24 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // --- 7. Gemini Gift Generation Logic ---
+
+    // Trying to make sure the script clears after each prompt
+    const giftsBtn = document.getElementById('gifts');
+    const giftsModal = document.getElementById('gifts-modal');
+
+    giftsBtn.addEventListener('click', () => {
+        // Show the modal
+        giftsModal.classList.remove('hidden');
+
+        // Clear previous output
+        giftOutput.innerHTML = '';
+        giftInput.value = '';
+
+        // Optionally also clear storage so it doesn't auto-repopulate
+        chrome.storage.local.set({ giftStatus: "default", lastGift: "" });
+    });
+    // New code added ends here
+    
     // (Your code - preserved)
     const giftInput = document.getElementById("gift-input");
     const generateButton = document.getElementById("generate-btn");
