@@ -187,6 +187,42 @@ body {
     box-shadow: 0 0 10px #ff6600;
 }
 
+/* === GIFT INPUT/OUTPUT STYLING === */
+#gift-output {
+    width: 100%;
+    min-height: 50px;
+    margin-top: 10px;
+    padding: 10px;
+    background: transparent;
+    color: #f0f0f0;
+    font-family: "Creepster", cursive, Arial, sans-serif;
+    white-space: pre-wrap;
+}
+
+/* Style the gift input textarea */
+#gift-input {
+    width: 100%;
+    min-height: 80px;
+    max-width: 260px;
+    padding: 10px;
+    font-family: "Creepster", cursive, Arial, sans-serif;
+    font-size: 16px;
+    color: #f0f0f0;
+    background: rgba(0,0,0,0.2);
+    border: 2px solid #ff6600;
+    border-radius: 10px;
+    box-sizing: border-box;
+    resize: vertical;
+    outline: none;
+}
+
+/* Placeholder text styling */
+#gift-input::placeholder {
+    color: #ccc;
+    font-family: "Creepster", cursive, Arial, sans-serif;
+    font-style: italic;
+}
+
 /* --- Haunt Modal Styles (FIXED) --- */
 
 /* This is the dark, full-screen overlay */
