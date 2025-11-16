@@ -27,6 +27,6 @@ The **gravestone icon** is always visible in the Chrome extension.
 
 ## Additional Features
 
-- **Pending Mail Indicator** – Visual cue when messages are waiting.  
+- **Incoming Mail Indicator** – Visual cue above ghost when messages are waiting.  
 - **Ghost Animations** – Shake, glow, float, chase mouse.  
 - **Sound Effects** – For haunt and ghost interactions.
