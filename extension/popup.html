@@ -1,4 +1,3 @@
-<!-- Main html page for chrome extension -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,19 +8,20 @@
 </head>
 
 <body>
-    <!-- Always-visible gravestone -->
     <div id="gravestone-container">
         <img id="gravestone" src="icons/gravestone.png" alt="Gravestone">
     </div>
 
-    <!-- Ghost placeholder -->
     <div id="popup-content" class="hidden">
         <div id="ghost-container">
             <img id="ghost" src="icons/ghost.png" alt="Ghost">
         </div>
     </div>
 
-    <!-- Menu (always visible) -->
+    <div id="pairing-container">
+        <input type="text" id="pair-code" placeholder="Enter pairing code">
+        <button id="save-code">Save Code</button>
+    </div>
     <div id="menu">
         <button id="mailbox" class="menu-btn">
             <img src="icons/letter.png" alt="Mailbox">
@@ -37,7 +37,6 @@
         </button>
     </div>
 
-    <!-- Modals -->
     <div id="mailbox-modal" class="modal mailbox-background hidden">
         <h3> Mailbox </h3>
         <p> No messages yet! </p>
@@ -48,20 +47,16 @@
         <h3>Dressing Station</h3>
         <p>Customize your ghost!</p>
 
-        <!-- Accessories -->
         <div id="dressing-options">
             <button class="dress-item" data-type="hat" data-id="hat1">
                 <img src="icons/hat1.png" alt="Hat 1">
             </button>
-
             <button class="dress-item" data-type="hat" data-id="hat2">
                 <img src="icons/hat2.png" alt="Hat 2">
             </button>
-
             <button class="dress-item" data-type="glasses" data-id="glasses1">
                 <img src="icons/glasses1.png" alt="Glasses 1">
             </button>
-
             <button class="dress-item" data-type="glasses" data-id="glasses2">
                 <img src="icons/glasses2.png" alt="Glasses 2">
             </button>
@@ -83,18 +78,17 @@
     </div>
 
     <div id="haunt-modal" class="modal haunt-background hidden">
-        <div class="modal-content"> 
+        <div class="modal-content">
             <h3> Haunt </h3>
-            <p> Prepare to scare! </p>
-            
+            <p>Pair with a friend to prepare a scare!</p>
+
             <button id="start-haunt-btn">Start Haunting</button>
-            
+
             <button class="close-btn"> Close </button>
         </div>
     </div>
 
-    
-    </div> <script src="Functions/Home/ghost-state.js"></script>
+    <script src="Functions/Home/ghost-state.js"></script>
     <script src="popup.js"></script>
 </body>
 
