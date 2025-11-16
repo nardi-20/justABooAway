@@ -72,17 +72,28 @@
 
     <div id="gifts-modal" class="modal gifts-background hidden">
         <h3> Generate a Gift </h3>
-        <textarea id="gift-input" placeholder="e.g., Write a 4-line spooky poem for a friend who loves bats..."></textarea>
-        <button id="generate-btn">Conjure Gift</button>
+        <textarea id="gift-input"
+            placeholder="e.g., Write a 4-line spooky poem for a friend who loves bats..."></textarea>
+        <button id="generate-btn"
+            style="font-family: 'Creepster', cursive; color: #f0f0f0; background: #333; border: 2px solid #ff6600; border-radius: 8px; padding: 6px 12px; cursor: pointer;">
+            Conjure Gift
+        </button>
         <div id="gift-output"></div>
         <button class="close-btn"> Close </button>
     </div>
 
-<div id="haunt-modal" class="modal haunt-background hidden">
-        <h3> Haunt </h3>
-        <p> Prepare to scare! </p>
-        <button class="close-btn"> Close </button>
+    <div id="haunt-modal" class="modal haunt-background hidden">
+        <div class="modal-content"> 
+            <h3> Haunt </h3>
+            <p> Prepare to scare! </p>
+            
+            <button id="start-haunt-btn">Start Haunting</button>
+            
+            <button class="close-btn"> Close </button>
+        </div>
     </div>
+
+    
     </div> <script src="Functions/Home/ghost-state.js"></script>
     <script src="popup.js"></script>
 </body>

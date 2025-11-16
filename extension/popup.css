@@ -188,3 +188,121 @@ body {
     box-shadow: 0 0 10px #ff6600;
 }
 
+/* === GIFT INPUT/OUTPUT STYLING === */
+#gift-output {
+    width: 100%;
+    min-height: 50px;
+    margin-top: 10px;
+    padding: 10px;
+    background: transparent;
+    color: #f0f0f0;
+    font-family: "Creepster", cursive, Arial, sans-serif;
+    white-space: pre-wrap;
+}
+
+/* Style the gift input textarea */
+#gift-input {
+    width: 100%;
+    min-height: 80px;
+    max-width: 260px;
+    padding: 10px;
+    font-family: "Creepster", cursive, Arial, sans-serif;
+    font-size: 16px;
+    color: #f0f0f0;
+    background: rgba(0,0,0,0.2);
+    border: 2px solid #ff6600;
+    border-radius: 10px;
+    box-sizing: border-box;
+    resize: vertical;
+    outline: none;
+}
+
+/* Placeholder text styling */
+#gift-input::placeholder {
+    color: #ccc;
+    font-family: "Creepster", cursive, Arial, sans-serif;
+    font-style: italic;
+}
+
+/* --- Haunt Modal Styles (FIXED) --- */
+
+/* This is the dark, full-screen overlay */
+.haunt-background {
+    position: fixed; /* Cover the whole popup */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%; /* Override base .modal width */
+    max-width: 100%; /* Override base .modal max-width */
+    background-color: #282828; /* The dark gray from your image */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+
+    /* --- Overrides --- */
+    /* Remove the orange border and shadow from the base .modal style */
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    animation: modal-pop 0.2s ease-out; /* Kept your pop-in */
+}
+
+/* This is the container for the text and buttons */
+.haunt-background .modal-content {
+    text-align: center;
+    /* Use a serif font to get that "spooky" look */
+    font-family: "Georgia", "Times New Roman", serif;
+}
+
+/* Styles the "Haunt" title (using H3 to match your HTML) */
+.haunt-background h3 {
+    color: #e0e0e0;
+    font-size: 2.5rem;
+    font-weight: normal; /* The font is elegant, not bold */
+    margin-bottom: 10px;
+}
+
+/* Styles the "Prepare to scare!" subtitle */
+.haunt-background p {
+    color: #e0e0e0;
+    font-size: 1.1rem;
+    font-style: italic;
+    margin-bottom: 30px;
+}
+
+/* --- Button Styles (FIXED) --- */
+
+/* A shared style for both buttons */
+.haunt-background .close-btn,
+.haunt-background #start-haunt-btn {
+    font-family: Arial, sans-serif; /* Buttons look better with a clean font */
+    background-color: #555;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin: 0 5px; /* Side margin for spacing */
+    transition: background-color 0.2s;
+    
+    /* --- Overrides --- */
+    display: inline-block; /* <-- This makes them sit side-by-side */
+}
+
+/* Hover effect for both buttons */
+.haunt-background .close-btn:hover,
+.haunt-background #start-haunt-btn:hover {
+    background-color: #777;
+}
+
+/* Make the "Start Haunt" button stand out */
+.haunt-background #start-haunt-btn {
+    background-color: #9b0000; /* A spooky, dark red */
+}
+
+.haunt-background #start-haunt-btn:hover {
+    background-color: #c20000; /* Brighter red on hover */
+}

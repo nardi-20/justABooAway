@@ -6,10 +6,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const ghostImg = document.getElementById("ghost"); // Image element
     const menu = document.getElementById("menu");
     const ALL_MODAL_SELECTORS = ".mailbox-background, .dressing-background, .gifts-background, .haunt-background";
+    const startHauntBtn = document.getElementById("start-haunt-btn"); // ✨ ADD THIS LINE
 
 
     // --- 2. Helper Functions for Modals ---
-    // (Your code - preserved)
     function closeAllModals() {
         document.querySelectorAll(ALL_MODAL_SELECTORS)
             .forEach(m => m.classList.add("hidden"));
@@ -92,15 +92,51 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
     
-    // --- 5. Menu Button Toggle Logic (FIXED) ---
-    // (This is YOUR code. We are keeping it and discarding the incoming 'console.log's)
+    // --- 5. Menu Button Toggle Logic (UPDATED) ---
     setupModalToggle("mailbox", "mailbox-modal");
     setupModalToggle("dressing", "dressing-modal");
     setupModalToggle("gifts", "gifts-modal");
-    setupModalToggle("haunt", "haunt-modal");
 
-    // Close buttons
-    document.querySelectorAll(".close-btn").forEach(btn => btn.addEventListener("click", closeAllModals));
+    // ✨ NEW: Logic for the "Haunt" ICON (from the menu)
+    document.getElementById("haunt").addEventListener("click", () => {
+        const modal = document.getElementById("haunt-modal");
+        const isAlreadyOpen = !modal.classList.contains("hidden");
+
+        if (isAlreadyOpen) {
+            // If modal is open, close it and reset ghost
+            modal.classList.add("hidden");
+            updateGhostImage(); // Reset the image
+        } else {
+            // If modal is closed, open it and show scary ghost
+            openModal("haunt-modal");
+            ghostImg.src = "icons/ghost+scary.png"; // Make ghost scary
+        }
+    });
+
+    // ✨ NEW: Logic for the "Start Haunting" BUTTON (inside the modal)
+    if (startHauntBtn) {
+        startHauntBtn.addEventListener("click", () => {
+            // Send the message to the webpage to start haunting
+            chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                const tab = tabs[0];
+                if (tab) {
+                    chrome.tabs.sendMessage(tab.id, { action: "startHaunting" });
+                }
+            });
+            
+            // Close the modal
+            closeAllModals();
+            // Note: We don't reset the image, so the icon stays scary
+        });
+    }
+
+    // ✨ UPDATED: Close buttons (now reset the ghost image)
+    document.querySelectorAll(".close-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            closeAllModals();
+            updateGhostImage(); // Reset the ghost
+        });
+    });
 
     // --- 6. Playing sounds when hovering over menu options ---
     // (Your code - preserved)
@@ -128,6 +164,24 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // --- 7. Gemini Gift Generation Logic ---
+
+    // Trying to make sure the script clears after each prompt
+    const giftsBtn = document.getElementById('gifts');
+    const giftsModal = document.getElementById('gifts-modal');
+
+    giftsBtn.addEventListener('click', () => {
+        // Show the modal
+        giftsModal.classList.remove('hidden');
+
+        // Clear previous output
+        giftOutput.innerHTML = '';
+        giftInput.value = '';
+
+        // Optionally also clear storage so it doesn't auto-repopulate
+        chrome.storage.local.set({ giftStatus: "default", lastGift: "" });
+    });
+    // New code added ends here
+    
     // (Your code - preserved)
     const giftInput = document.getElementById("gift-input");
     const generateButton = document.getElementById("generate-btn");
