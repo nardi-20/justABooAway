@@ -7,6 +7,7 @@ console.log("[JustABooAway] content script loaded on", window.location.href);
 const GHOST_IDLE_URL = chrome.runtime.getURL("icons/GhostIdle.gif");
 const GHOST_DIE_URL  = chrome.runtime.getURL("icons/GhostDie.gif");
 const GHOST_FLY_URL  = chrome.runtime.getURL("icons/GhostFly.gif");
+const GHOST_HAUNT_URL = chrome.runtime.getURL("icons/HauntedHead.gif"); // 👈 FIX THIS LINE
 
 // =====================
 //  Animation state
@@ -22,7 +23,7 @@ const DIE_DURATION_MS = 1000;
 let idleAnimationId = null;
 let idleStartTime = null;
 
-// current effect: null | "wiggle" | "special"
+// current effect: null | "wiggle" | "special" | "haunt"
 let effect = null;
 let effectStartTime = 0;
 
@@ -118,6 +119,7 @@ function connectSocket(pairCode) {
                 // Friend triggered a haunt
                 console.log("[JustABooAway] BOO! We've been haunted (from WebSocket)!");
                 chrome.runtime.sendMessage({ action: "receiveHaunt" });
+                triggerEffect("haunt"); // 👈 MODIFIED
             }
         }
 
@@ -245,6 +247,17 @@ function startIdleAnimation() {
                 scale = 1 + 0.4 * Math.sin(e * Math.PI);
                 rotate = 10 * Math.sin(e * 2 * Math.PI);
             }
+        } else if (effect === "haunt") { // 👈 ADDED
+            const elapsed = timestamp - effectStartTime;
+            const duration = 3000; // 3 seconds
+            if (elapsed >= duration) {
+                effect = null; // End the effect
+            } else {
+                // Re-use the "wiggle" logic for a shake effect
+                const phase = (elapsed / 600) * 2 * Math.PI; // 600ms shake period
+                offsetX = Math.sin(phase) * 20;
+                scale = 1.05;
+            }
         }
 
         // If effect ended, ensure sprite goes back to idle
@@ -275,12 +288,12 @@ function stopIdleAnimation() {
 
 /**
  * Start a new effect if none is currently running.
- * kind: "wiggle" | "special"
- * Both use the flying sprite; special just has more dramatic motion.
+ * kind: "wiggle" | "special" | "haunt"
  */
 function triggerEffect(kind) {
     if (!ghost || isDying) return;
-    if (kind !== "wiggle" && kind !== "special") return;
+    // 👈 MODIFIED
+    if (kind !== "wiggle" && kind !== "special" && kind !== "haunt") return;
 
     // If an effect is already running, ignore new triggers
     if (effect !== null) {
@@ -291,9 +304,15 @@ function triggerEffect(kind) {
     effect = kind;
     effectStartTime = performance.now();
 
-    // Switch to flying sprite while effect is active
-    if (ghost.src !== GHOST_FLY_URL) {
-        ghost.src = GHOST_FLY_URL;
+    // 👈 MODIFIED: Switch sprite based on effect
+    if (kind === "haunt") {
+        if (ghost.src !== GHOST_HAUNT_URL) {
+            ghost.src = GHOST_HAUNT_URL;
+        }
+    } else { // "wiggle" or "special"
+        if (ghost.src !== GHOST_FLY_URL) {
+            ghost.src = GHOST_FLY_URL;
+        }
     }
 }
 
@@ -417,7 +436,7 @@ function removeGhost(broadcast = true) {
             ghost = null;
             console.log("[JustABooAway] Ghost removed after death animation");
         }
-        isDying = false;
+        isDYing = false;
     }, DIE_DURATION_MS);
 
     if (broadcast) {

@@ -42,16 +42,17 @@
   ],
 
   "web_accessible_resources": [
-    {
-      "resources": [
-        "icons/ghost.png",
-        "icons/GhostIdle.gif",
-        "icons/GhostDie.gif",
-        "icons/GhostFly.gif",
-        "icons/*.png",
-        "icons/*.jpg"
-      ],
-      "matches": ["<all_urls>"]
-    }
-  ]
+      {
+        "resources": [
+          "icons/ghost.png",
+          "icons/GhostIdle.gif",
+          "icons/GhostDie.gif",
+          "icons/GhostFly.gif",
+          "icons/HauntedHead.gif",
+          "icons/*.png",
+          "icons/*.jpg"
+        ],
+        "matches": ["<all_urls>"]
+      }
+    ]
 }
