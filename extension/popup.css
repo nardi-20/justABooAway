@@ -14,7 +14,7 @@ body {
 
 /* === HIDDEN CLASS === */
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 /* === GRAVESTONE === */
@@ -78,6 +78,33 @@ body {
     animation: float 3s ease-in-out infinite, ghost-glow 3s ease-in-out infinite;
 }
 
+/* === PAIRING CONTAINER === */
+#pairing-container {
+    display: flex;
+    gap: 5px;
+    padding: 0 10px 10px 10px;
+}
+
+#pair-code {
+    flex-grow: 1;
+    background: rgba(0,0,0,0.2);
+    border: 1px solid #ff6600;
+    color: #f0f0f0;
+    padding: 5px;
+    font-family: Arial, sans-serif;
+    border-radius: 4px;
+}
+
+#save-code {
+    background: #ff6600;
+    border: none;
+    color: #1b1b1b;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
 /* === MENU BUTTONS === */
 #menu {
     display: flex;
@@ -110,7 +137,7 @@ body {
     box-shadow: 0 0 15px #ff6600, 0 0 30px #ffcc00;
 }
 
-/* === MODALS === */
+/* === MODALS (RESTORED TO ORIGINAL) === */
 .modal {
     width: 90%;
     max-width: 260px;
@@ -121,18 +148,30 @@ body {
     box-shadow: 0 0 20px #ff6600;
     border-radius: 15px;
     text-align: center;
-    margin-bottom: 10px;
+    margin: 10px auto; /* Centered horizontally with margin-bottom */
     animation: modal-pop 0.3s ease-out;
     overflow: visible;
+    box-sizing: border-box; /* Good to keep this */
+    position: relative; /* Back to relative */
+    z-index: 100;
 }
 
 .modal.hidden {
     display: none;
 }
 
+/* This is your original pop animation */
 @keyframes modal-pop {
     0% { transform: scale(0.5); opacity: 0; }
     100% { transform: scale(1); opacity: 1; }
+}
+
+/* This is the content wrapper *inside* your modals */
+.modal-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px; /* Space between elements */
 }
 
 /* Close buttons */
@@ -146,6 +185,7 @@ body {
     cursor: pointer;
     display: block;
     transition: background 0.2s ease;
+    font-family: Arial, sans-serif;
 }
 
 .close-btn:hover {
@@ -155,7 +195,7 @@ body {
 /* === DRESSING STATION BUTTONS === */
 #dressing-options {
     display: flex;
-    flex-direction: row;
+    flex-direction: row; /* This is key for your layout */
     justify-content: center;
     align-items: center;
     gap: 10px;
@@ -198,9 +238,9 @@ body {
     color: #f0f0f0;
     font-family: "Creepster", cursive, Arial, sans-serif;
     white-space: pre-wrap;
+    box-sizing: border-box;
 }
 
-/* Style the gift input textarea */
 #gift-input {
     width: 100%;
     min-height: 80px;
@@ -217,92 +257,91 @@ body {
     outline: none;
 }
 
-/* Placeholder text styling */
 #gift-input::placeholder {
     color: #ccc;
     font-family: "Creepster", cursive, Arial, sans-serif;
     font-style: italic;
 }
 
-/* --- Haunt Modal Styles (FIXED) --- */
 
-/* This is the dark, full-screen overlay */
-.haunt-background {
-    position: fixed; /* Cover the whole popup */
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%; /* Override base .modal width */
-    max-width: 100%; /* Override base .modal max-width */
-    background-color: #282828; /* The dark gray from your image */
-    display: flex;
-    align-items: center;
+/* --- START HAUNT MODAL SPECIFIC STYLES (CORRECTED) --- */
+
+/* This new keyframe is ONLY for the haunt modal */
+@keyframes haunt-modal-pop {
+    0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+#haunt-modal {
+    /* Override background and border */
+    background: #282828;
+    border: 2px solid #8B0000;
+    box-shadow: 0 0 20px #8B0000;
+
+    /* 💡 ADDED: Centering logic moved here */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 200; /* Higher z-index */
+    margin: 0; /* Remove the margin */
+    
+    /* Use the new animation */
+    animation-name: haunt-modal-pop; 
+}
+
+#haunt-modal h3 {
+    font-family: 'Creepster', cursive;
+    color: #CC0000;
+    font-size: 2.8em;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+    margin: 0;
+    line-height: 1;
+}
+
+#haunt-modal p {
+    font-family: 'Nosifier', cursive;
+    color: #FF6666;
+    font-size: 1.1em;
+    margin-top: 0;
+}
+
+/* This makes the buttons side-by-side */
+#haunt-modal .modal-content {
+    flex-direction: row;
+    flex-wrap: wrap;
     justify-content: center;
-    z-index: 100;
-
-    /* --- Overrides --- */
-    /* Remove the orange border and shadow from the base .modal style */
-    border: none;
-    box-shadow: none;
-    border-radius: 0;
-    animation: modal-pop 0.2s ease-out; /* Kept your pop-in */
+    gap: 10px;
 }
 
-/* This is the container for the text and buttons */
-.haunt-background .modal-content {
-    text-align: center;
-    /* Use a serif font to get that "spooky" look */
-    font-family: "Georgia", "Times New Roman", serif;
+/* Need to override the general .close-btn `display: block` */
+#haunt-modal .close-btn,
+#haunt-modal #start-haunt-btn {
+    display: inline-block;
+    margin: 0; /* Remove auto margin */
+    font-family: Arial, sans-serif;
+    padding: 10px 20px;
+    font-size: 1em;
+    font-weight: bold;
+    border-radius: 5px;
 }
 
-/* Styles the "Haunt" title (using H3 to match your HTML) */
-.haunt-background h3 {
-    color: #e0e0e0;
-    font-size: 2.5rem;
-    font-weight: normal; /* The font is elegant, not bold */
-    margin-bottom: 10px;
-}
-
-/* Styles the "Prepare to scare!" subtitle */
-.haunt-background p {
-    color: #e0e0e0;
-    font-size: 1.1rem;
-    font-style: italic;
-    margin-bottom: 30px;
-}
-
-/* --- Button Styles (FIXED) --- */
-
-/* A shared style for both buttons */
-.haunt-background .close-btn,
-.haunt-background #start-haunt-btn {
-    font-family: Arial, sans-serif; /* Buttons look better with a clean font */
-    background-color: #555;
+#haunt-modal #start-haunt-btn {
+    background-color: #8B0000;
     color: white;
     border: none;
-    border-radius: 8px;
-    padding: 12px 24px;
-    font-size: 1rem;
-    cursor: pointer;
-    margin: 0 5px; /* Side margin for spacing */
-    transition: background-color 0.2s;
-    
-    /* --- Overrides --- */
-    display: inline-block; /* <-- This makes them sit side-by-side */
 }
 
-/* Hover effect for both buttons */
-.haunt-background .close-btn:hover,
-.haunt-background #start-haunt-btn:hover {
+#haunt-modal #start-haunt-btn:hover {
+    background-color: #A00000;
+}
+
+#haunt-modal .close-btn {
+    background-color: #555;
+}
+
+#haunt-modal .close-btn:hover {
     background-color: #777;
 }
 
-/* Make the "Start Haunt" button stand out */
-.haunt-background #start-haunt-btn {
-    background-color: #9b0000; /* A spooky, dark red */
-}
-
-.haunt-background #start-haunt-btn:hover {
-    background-color: #c20000; /* Brighter red on hover */
-}
+/* --- END HAUNT MODAL SPECIFIC STYLES --- */
