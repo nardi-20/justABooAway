@@ -1,13 +1,17 @@
 // service-worker.js
 
-// 🚨 IMPORTANT: Replace with your actual key
 const GEMINI_API_KEY = "AIzaSyDJYfvEmaGjhvrpPso52TNpPMiItGRt0y4"; 
 
 chrome.runtime.onMessage.addListener(
     (request, sender, sendResponse) => {
+        console.log("Service worker received action:", request.action); // Debug 1
+
         if (request.action === "generateGift") {
-            
-            // Return a Promise to handle the async work. The browser will wait for this to resolve.
+
+            // Set status in storage immediately so popup knows we're working
+            chrome.storage.local.set({ giftStatus: "loading" });
+
+            // Return a promise to handle the asynchronous API call
             return new Promise(async (resolve, reject) => {
                 try {
                     const response = await fetch(
@@ -21,35 +25,56 @@ chrome.runtime.onMessage.addListener(
                                 contents: [{
                                     parts: [{ text: request.prompt }]
                                 }],
-                                generationConfig: { 
+                                generationConfig: {
                                     temperature: 0.8
                                 }
                             }),
                         }
                     );
 
-                    // 1. Check for non-200 HTTP status (API errors like 403, 429)
                     if (!response.ok) {
                         const errorData = await response.json();
-                        // Resolve the promise with a failed state
-                        resolve({ success: false, gift: `API Error ${response.status}: ${errorData.error.message}` });
+                        console.error("API Error:", errorData); // Debug 2
+                        
+                        // Also set error status in storage
+                        await chrome.storage.local.set({ giftStatus: "error", lastGift: `API Error ${response.status}: ${errorData.error.message}` });
+                        resolve({ success: false, gift: `API Error ${response.status}: ${errorData.error.message}` }); // Still resolve for popup if open
                         return;
                     }
 
                     const data = await response.json();
-                    // 2. Safely extract the generated text
-                    const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text || "Error generating gift (no text found in response).";
-                    
-                    // Resolve the promise with a success state
-                    resolve({ success: true, gift: generatedText });
+                    console.log("API Success, Full Data:", data); // Debug 3
+
+                    const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text || "Error: No text found in response.";
+                    console.log("Extracted Text:", generatedText); // Debug 4
+
+                    // Format text with <br> tags for HTML display
+                    const htmlGift = generatedText.replace(/\n/g, '<br>');
+
+                    // Save the successful gift to storage
+                    await chrome.storage.local.set({ 
+                        giftStatus: "success", 
+                        lastGift: htmlGift 
+                    });
+
+                    // Resolve the promise for the popup (if it's still open)
+                    resolve({ success: true, gift: htmlGift }); 
+                    console.log("Promise Resolved."); // Debug 5
 
                 } catch (error) {
-                    // 3. Catch network errors
-                    console.error("Gemini API Error:", error);
-                    resolve({ success: false, gift: "Sorry, the ghost is too tired to generate a gift right now (Network Failure)." });
+                    console.error("Fetch/Network Error:", error); // Debug 6
+                    
+                    // Set error status in storage
+                    await chrome.storage.local.set({ 
+                        giftStatus: "error", 
+                        lastGift: "Sorry, a network error occurred." 
+                    });
+                    resolve({ success: false, gift: "Sorry, a network error occurred." });
                 }
-            });
+            }); // End of new Promise
         }
-        // If the action is not 'generateGift', return undefined.
+        
+        // Note: It's good practice to return true for async message listeners,
+        // but returning a Promise (as we do above) accomplishes the same thing.
     }
 );
