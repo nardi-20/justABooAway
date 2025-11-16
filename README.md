@@ -1,4 +1,4 @@
-# justABooAway
+# ghostance
 
 "keep your person close, even from miles away"
 
@@ -22,3 +22,4 @@ Gravestone icon is always visible in the Chrome extension.
     Pending Mail Indicator – Visual cue when messages are waiting.
     Ghost Animations – Shake, glow, float, chase mouse.
     Sound Effects – For haunt and ghost interactions.
+
