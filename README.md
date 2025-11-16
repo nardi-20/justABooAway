@@ -20,7 +20,7 @@ The **gravestone icon** is always visible in the Chrome extension.
 
 1. **Letter icon – Mailbox**: Receive/send messages. Pending mail is indicated visually. Ghost floats out to deliver the message.  
 2. **Spider bow icon – Dressing Station**: Change the ghost’s appearance (clothes, hats, glasses, etc.).  
-3. **Wand icon – Mail Gifts**: Send virtual gifts (can animate with ghost flying).  
+3. **Gift icon – Mail Gifts**: Send virtual gifts (can animate with ghost flying).  
 4. **Skull icon – Haunt**: Ghost chases the other user’s mouse. Plays scary sounds and shows messages.
 
 ---
